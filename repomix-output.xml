@@ -1,0 +1,1073 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.gitignore
+backend/app/core/firebase_config.py
+backend/app/dependencies/auth.py
+backend/app/main.py
+backend/app/routers/auth.py
+backend/app/routers/chat.py
+backend/app/schemas/auth.py
+backend/app/schemas/chat.py
+backend/app/services/firestore_service.py
+backend/app/services/ollama_service.py
+frontend/api_client.py
+frontend/app.py
+README.md
+requirements.txt
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".gitignore">
+#private file
+.streamlit/
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+#   For a library or package, you might want to ignore these files since the code is
+#   intended to run in multiple environments; otherwise, check them in:
+# .python-version
+
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if having platform-specific dependencies or dependencies
+#   having no cross-platform support, pipenv may install dependencies that don't work, or not
+#   install all needed dependencies.
+#Pipfile.lock
+
+# poetry
+#   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
+#   This is especially recommended for binary packages to ensure reproducibility, and is more
+#   commonly ignored for libraries.
+#   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
+#poetry.lock
+
+# pdm
+#   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
+#pdm.lock
+#   pdm stores project-wide configurations in .pdm.toml, but it is recommended to not include it
+#   in version control.
+#   https://pdm.fming.dev/#use-with-ide
+.pdm.toml
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# PyCharm
+#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
+#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
+#  and can be added to the global gitignore or merged into this file.  For a more nuclear
+#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
+#.idea/
+</file>
+
+<file path="backend/app/core/firebase_config.py">
+import os
+import json
+import pyrebase
+import firebase_admin
+import streamlit as st
+
+from firebase_admin import credentials, firestore
+
+def get_pyrebase_auth():
+    firebase_cfg = st.secrets["firebase_client"]
+    firebase_app = pyrebase.initialize_app(firebase_cfg)
+    return firebase_app.auth()
+
+def init_firebase_admin():
+    if not firebase_admin._apps:
+        cred_dict = dict(st.secrets["firebase_admin"])
+        cred = credentials.Certificate(cred_dict)
+        firebase_admin.initialize_app(cred)
+
+def get_firestore():
+    init_firebase_admin()
+    return firestore.client()
+</file>
+
+<file path="backend/app/dependencies/auth.py">
+from fastapi import Header, HTTPException
+from firebase_admin import auth as admin_auth
+from backend.app.core.firebase_config import init_firebase_admin
+
+def get_current_user(authorization: str = Header(...)):
+    init_firebase_admin()
+
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+
+    token = authorization.replace("Bearer ", "").strip()
+
+    try:
+        decoded = admin_auth.verify_id_token(token)
+        return {
+            "uid": decoded.get("uid"),
+            "email": decoded.get("email"),
+            "token": token
+        }
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+</file>
+
+<file path="backend/app/main.py">
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from backend.app.routers.auth import router as auth_router
+from backend.app.routers.chat import router as chat_router
+
+app = FastAPI(title="Mika Backend")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(auth_router)
+app.include_router(chat_router)
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+</file>
+
+<file path="backend/app/routers/auth.py">
+import os
+import secrets
+from urllib.parse import urlencode
+
+import requests
+from fastapi import APIRouter, HTTPException, Request, Depends
+from fastapi.responses import RedirectResponse
+from firebase_admin import auth as admin_auth
+
+from backend.app.schemas.auth import (
+    SignupRequest, LoginRequest, GoogleLoginRequest
+)
+from backend.app.core.firebase_config import get_pyrebase_auth, init_firebase_admin
+from backend.app.dependencies.auth import get_current_user
+
+router = APIRouter(prefix="/auth", tags=["auth"])
+
+auth_client = get_pyrebase_auth()
+init_firebase_admin()
+
+
+import streamlit as st
+
+google_cfg = st.secrets["google-login"]
+
+GOOGLE_URL = google_cfg["google-url"]
+GOOGLE_CLIENT_ID = google_cfg["google_client_id"]
+GOOGLE_CLIENT_SECRET = google_cfg["google_client_secret"]
+GOOGLE_REDIRECT_URI = google_cfg["google_redirect_uri"]
+FIREBASE_WEB_API_KEY = google_cfg["firebase_web_api_key"]
+FRONTEND_URL = google_cfg["frontend_url"]
+COOKIE_SECURE = google_cfg["cookie_secure"]
+
+
+@router.post("/signup")
+def signup(payload: SignupRequest):
+    try:
+        auth_client.create_user_with_email_and_password(payload.email, payload.password)
+        return {"message": "Tạo tài khoản thành công"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/login")
+def login(payload: LoginRequest):
+    try:
+        user = auth_client.sign_in_with_email_and_password(payload.email, payload.password)
+        return {
+            "email": payload.email,
+            "uid": user["localId"],
+            "idToken": user["idToken"],
+            "refreshToken": user.get("refreshToken")
+        }
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=str(e))
+
+
+@router.post("/google")
+def google_login(payload: GoogleLoginRequest):
+    try:
+        # Bước 1: Mang cái Google Token gửi lên cổng Identity Toolkit của Firebase để "đổi" lấy Firebase Token
+        firebase_resp = requests.post(
+            f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key={FIREBASE_WEB_API_KEY}",
+            json={
+                "postBody": urlencode({
+                    "id_token": payload.id_token,
+                    "providerId": "google.com",
+                }),
+                "requestUri": "http://localhost:8501", # Cổng của Frontend
+                "returnIdpCredential": True,
+                "returnSecureToken": True,
+            },
+            timeout=20,
+        )
+
+        # Nếu Firebase từ chối việc đổi thẻ
+        if not firebase_resp.ok:
+            raise Exception(f"Firebase exchange failed: {firebase_resp.text}")
+
+        # Bước 2: Rút trích thông tin từ thẻ Firebase mới
+        firebase_data = firebase_resp.json()
+        firebase_id_token = firebase_data.get("idToken")
+        email = firebase_data.get("email")
+        uid = firebase_data.get("localId")
+
+        # Bước 3: Trả về cái Token CHUẨN của Firebase cho Streamlit để nó dùng cho các tính năng Chat sau này
+        return {
+            "email": email,
+            "uid": uid,
+            "idToken": firebase_id_token
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=f"Google token invalid: {e}")
+
+
+@router.get("/google/start")
+def google_start():
+    state = secrets.token_urlsafe(32)
+
+    params = {
+        "client_id": GOOGLE_CLIENT_ID,
+        "redirect_uri": GOOGLE_REDIRECT_URI,
+        "response_type": "code",
+        "scope": "openid email profile",
+        "state": state,
+        "access_type": "offline",
+        "prompt": "select_account",
+    }
+
+    google_auth_url = (
+        "https://accounts.google.com/o/oauth2/v2/auth?"
+        + urlencode(params)
+    )
+
+    response = RedirectResponse(url=google_auth_url, status_code=302)
+    response.set_cookie(
+        key="google_oauth_state",
+        value=state,
+        max_age=600,
+        httponly=True,
+        secure=COOKIE_SECURE,
+        samesite="lax",
+        path="/",
+    )
+    return response
+
+
+@router.get("/google/callback")
+def google_callback(
+    request: Request,
+    code: str | None = None,
+    state: str | None = None,
+    error: str | None = None,
+):
+    if error:
+        raise HTTPException(status_code=400, detail=f"Google OAuth error: {error}")
+
+    if not code:
+        raise HTTPException(status_code=400, detail="Missing authorization code")
+
+    saved_state = request.cookies.get("google_oauth_state")
+    if not saved_state or not state or saved_state != state:
+        raise HTTPException(status_code=400, detail="Invalid OAuth state")
+
+    token_resp = requests.post(
+        "https://oauth2.googleapis.com/token",
+        data={
+            "code": code,
+            "client_id": GOOGLE_CLIENT_ID,
+            "client_secret": GOOGLE_CLIENT_SECRET,
+            "redirect_uri": GOOGLE_REDIRECT_URI,
+            "grant_type": "authorization_code",
+        },
+        timeout=20,
+    )
+
+    if not token_resp.ok:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Failed to exchange Google code: {token_resp.text}"
+        )
+
+    token_data = token_resp.json()
+    google_id_token = token_data.get("id_token")
+
+    if not google_id_token:
+        raise HTTPException(status_code=400, detail="Google did not return id_token")
+
+    firebase_resp = requests.post(
+        f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key={FIREBASE_WEB_API_KEY}",
+        json={
+            "postBody": urlencode({
+                "id_token": google_id_token,
+                "providerId": "google.com",
+            }),
+            "requestUri": GOOGLE_REDIRECT_URI,
+            "returnIdpCredential": True,
+            "returnSecureToken": True,
+        },
+        timeout=20,
+    )
+
+    if not firebase_resp.ok:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Failed to sign in with Firebase Google provider: {firebase_resp.text}"
+        )
+
+    firebase_data = firebase_resp.json()
+    firebase_id_token = firebase_data.get("idToken")
+
+    if not firebase_id_token:
+        raise HTTPException(status_code=400, detail="Firebase did not return idToken")
+
+    separator = "&" if "?" in FRONTEND_URL else "?"
+    redirect_to_frontend = f"{FRONTEND_URL}{separator}{urlencode({'id_token': firebase_id_token})}"
+
+    response = RedirectResponse(url=redirect_to_frontend, status_code=302)
+    response.delete_cookie("google_oauth_state", path="/")
+    return response
+
+
+@router.get("/me")
+def me(user=Depends(get_current_user)):
+    return {
+        "email": user["email"],
+        "uid": user["uid"]
+    }
+</file>
+
+<file path="backend/app/routers/chat.py">
+from fastapi import APIRouter, Depends, HTTPException, Query
+
+from backend.app.dependencies.auth import get_current_user
+from backend.app.schemas.chat import ChatRequest
+from backend.app.services.firestore_service import save_message, load_last_messages
+from backend.app.services.ollama_service import chat_with_model
+
+router = APIRouter(prefix="/chat", tags=["chat"])
+
+WELCOME_MESSAGE = {
+    "role": "assistant",
+    "content": "Xin chào 👋! Tôi là Mika. Tôi có thể giúp gì cho bạn?"
+}
+
+@router.get("/messages")
+def get_messages(limit: int = Query(default=8, ge=1, le=50), user=Depends(get_current_user)):
+    msgs = load_last_messages(user["uid"], limit=limit)
+    return msgs if msgs else [WELCOME_MESSAGE]
+
+@router.post("")
+def chat(payload: ChatRequest, user=Depends(get_current_user)):
+    try:
+        save_message(user["uid"], "user", payload.message)
+
+        history = load_last_messages(user["uid"], limit=8)
+        reply = chat_with_model(history)
+
+        save_message(user["uid"], "assistant", reply)
+
+        return {"reply": reply}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+</file>
+
+<file path="backend/app/schemas/auth.py">
+from pydantic import BaseModel, EmailStr
+
+class SignupRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+class GoogleLoginRequest(BaseModel):
+    id_token: str
+
+class AuthResponse(BaseModel):
+    email: str
+    uid: str
+    idToken: str | None = None
+    refreshToken: str | None = None
+</file>
+
+<file path="backend/app/schemas/chat.py">
+from pydantic import BaseModel
+from typing import Literal
+
+class Message(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str
+
+class ChatRequest(BaseModel):
+    message: str
+
+class ChatResponse(BaseModel):
+    reply: str
+</file>
+
+<file path="backend/app/services/firestore_service.py">
+from datetime import datetime, timezone
+from backend.app.core.firebase_config import get_firestore
+from firebase_admin import firestore
+
+db = get_firestore()
+
+def save_message(uid: str, role: str, content: str):
+    doc = {
+        "role": role,
+        "content": content,
+        "ts": datetime.now(timezone.utc)
+    }
+    db.collection("chats").document(uid).collection("messages").add(doc)
+
+def load_last_messages(uid: str, limit: int = 8):
+    q = (
+        db.collection("chats")
+        .document(uid)
+        .collection("messages")
+        .order_by("ts", direction=firestore.Query.DESCENDING)
+        .limit(limit)
+    )
+
+    docs = list(q.stream())
+    docs.reverse()
+
+    return [
+        {
+            "role": d.to_dict().get("role", "assistant"),
+            "content": d.to_dict().get("content", "")
+        }
+        for d in docs
+    ]
+</file>
+
+<file path="backend/app/services/ollama_service.py">
+import os
+from ollama import Client
+
+MODEL = os.getenv("OLLAMA_MODEL", "llama3.2:1b")
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://kmhvy-34-125-197-209.run.pinggy-free.link")
+
+client = Client(host=OLLAMA_HOST)
+
+def chat_with_model(messages: list[dict]) -> str:
+    response = client.chat(
+        model=MODEL,
+        messages=messages
+    )
+    return response["message"]["content"]
+</file>
+
+<file path="frontend/api_client.py">
+import requests
+
+API_BASE = "http://localhost:8000"
+
+def signup(email: str, password: str):
+    r = requests.post(f"{API_BASE}/auth/signup", json={
+        "email": email,
+        "password": password
+    })
+    r.raise_for_status()
+    return r.json()
+
+def login(email: str, password: str):
+    r = requests.post(f"{API_BASE}/auth/login", json={
+        "email": email,
+        "password": password
+    })
+    r.raise_for_status()
+    return r.json()
+
+def google_login(id_token: str):
+    r = requests.post(f"{API_BASE}/auth/google", json={
+        "id_token": id_token
+    })
+    r.raise_for_status()
+    return r.json()
+
+def get_messages(id_token: str, limit: int = 8):
+    r = requests.get(
+        f"{API_BASE}/chat/messages",
+        params={"limit": limit},
+        headers={"Authorization": f"Bearer {id_token}"}
+    )
+    r.raise_for_status()
+    return r.json()
+
+def send_chat(id_token: str, message: str):
+    r = requests.post(
+        f"{API_BASE}/chat",
+        json={"message": message},
+        headers={"Authorization": f"Bearer {id_token}"}
+    )
+    r.raise_for_status()
+    return r.json()
+</file>
+
+<file path="frontend/app.py">
+import streamlit as st
+from collections import deque
+import requests
+import streamlit.components.v1 as components # Thêm dòng này
+
+
+st.set_page_config(page_title="Mika Frontend", page_icon="💬")
+st.write("Dữ liệu User hiện tại:", st.session_state.get("user"))
+
+
+# Trong chatbot-page/frontend/app.py
+components.html(
+    """
+    <script>
+    // Kiểm tra ở cấp cao nhất của trình duyệt (window.top)
+    const currentHash = window.top.location.hash;
+    
+    if (currentHash && currentHash.includes('id_token=')) {
+        // Lấy phần dữ liệu sau dấu #
+        const params = currentHash.substring(1);
+        
+        // Tạo URL mới, ép dấu # thành ?
+        const newUrl = window.top.location.origin + window.top.location.pathname + '?' + params;
+        
+        // Dùng replace để không bị lưu lại lịch sử trang lỗi vào nút Back của trình duyệt
+        window.top.location.replace(newUrl);
+    }
+    </script>
+    """,
+    height=0,
+)
+from api_client import signup, login, google_login, get_messages, send_chat
+
+
+
+WELCOME = {"role": "assistant", "content": "Xin chào 👋! Tôi là Mika. Tôi có thể giúp gì cho bạn?"}
+
+if "user" not in st.session_state:
+    st.session_state.user = None
+
+if "messages" not in st.session_state:
+    st.session_state.messages = deque([WELCOME], maxlen=8)
+
+if "show_signup" not in st.session_state:
+    st.session_state.show_signup = False
+
+if "show_login" not in st.session_state:
+    st.session_state.show_login = True
+
+
+def load_history():
+    if not st.session_state.user:
+        return
+    try:
+        msgs = get_messages(st.session_state.user["idToken"], limit=8)
+        st.session_state.messages = deque(msgs, maxlen=8)
+    except Exception:
+        st.session_state.messages = deque([WELCOME], maxlen=8)
+
+
+def clear_google_query_params():
+    try:
+        st.query_params.clear()
+    except Exception:
+        pass
+
+
+def handle_google_login_callback():
+    if st.session_state.user:
+        return
+
+    params = st.query_params
+    raw_token = params.get("id_token")
+
+    if not raw_token:
+        return
+
+    id_token = raw_token[0] if isinstance(raw_token, list) else raw_token
+
+    try:
+        user = google_login(id_token)
+        st.session_state.user = user
+        load_history()
+        clear_google_query_params()
+        st.success("Đăng nhập Google thành công")
+        st.rerun()
+    except requests.HTTPError as e:
+        st.error(f"Đăng nhập Google thất bại: {e}")
+        clear_google_query_params()
+    except Exception as e:
+        st.error(f"Lỗi xử lý Google login: {e}")
+        clear_google_query_params()
+
+
+def login_form():
+    st.subheader("Đăng nhập")
+
+    with st.form("login_form"):
+        email = st.text_input("Email")
+        password = st.text_input("Mật khẩu", type="password")
+        submitted = st.form_submit_button("Đăng nhập")
+        goto_signup = st.form_submit_button("Chưa có tài khoản? Đăng ký")
+
+    if goto_signup:
+        st.session_state.show_signup = True
+        st.session_state.show_login = False
+        st.rerun()
+
+    if submitted:
+        try:
+            user = login(email, password)
+            st.session_state.user = user
+            load_history()
+            st.success("Đăng nhập thành công")
+            st.rerun()
+        except requests.HTTPError as e:
+            st.error(f"Đăng nhập thất bại: {e}")
+        except Exception as e:
+            st.error(f"Lỗi đăng nhập: {e}")
+
+    st.markdown("### Hoặc")
+
+    google_login_url = dict(st.secrets["google-login"])["google-url"]
+
+    if google_login_url:
+        st.markdown(
+        f'''
+        <a href="{google_login_url}" target="_self" style="
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            padding: 0.6rem 1rem;
+            background-color: white;
+            color: black;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            border: 1px solid #ddd;
+            font-weight: 600;
+        ">
+            Đăng nhập với Google
+        </a>
+        ''',
+        unsafe_allow_html=True,
+    )
+    else:
+        st.info(
+            "Chưa cấu hình Google-login trong secrets. "
+            "Hãy thêm URL đăng nhập Google để dùng tính năng này."
+        )
+
+
+def signup_form():
+    st.subheader("Đăng ký")
+    with st.form("signup_form"):
+        email = st.text_input("Email")
+        password = st.text_input("Mật khẩu", type="password")
+        submitted = st.form_submit_button("Tạo tài khoản")
+        goto_login = st.form_submit_button("Đã có tài khoản? Đăng nhập")
+
+    if goto_login:
+        st.session_state.show_signup = False
+        st.session_state.show_login = True
+        st.rerun()
+
+    if submitted:
+        try:
+            signup(email, password)
+            st.success("Tạo tài khoản thành công, hãy đăng nhập")
+            st.session_state.show_signup = False
+            st.session_state.show_login = True
+            st.rerun()
+        except requests.HTTPError as e:
+            st.error(f"Đăng ký thất bại: {e}")
+        except Exception as e:
+            st.error(f"Lỗi đăng ký: {e}")
+
+
+handle_google_login_callback()
+
+st.title("Mika Chat")
+
+if st.session_state.user:
+    st.success(f"Đang đăng nhập: {st.session_state.user['email']}")
+    if st.button("Đăng xuất"):
+        st.session_state.user = None
+        st.session_state.messages = deque([WELCOME], maxlen=8)
+        clear_google_query_params()
+        st.rerun()
+else:
+    if st.session_state.show_signup:
+        signup_form()
+    else:
+        login_form()
+
+st.divider()
+
+if st.session_state.user:
+    for msg in list(st.session_state.messages):
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
+
+    prompt = st.chat_input("Nhập tin nhắn...")
+    if prompt:
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.markdown(prompt)
+
+        try:
+            res = send_chat(st.session_state.user["idToken"], prompt)
+            reply = res["reply"]
+        except Exception as e:
+            reply = f"Lỗi backend: {e}"
+
+        st.session_state.messages.append({"role": "assistant", "content": reply})
+        st.rerun()
+</file>
+
+<file path="requirements.txt">
+altair==5.5.0
+altex==0.2.0
+annotated-types==0.7.0
+anyio==4.10.0
+asn1crypto==1.5.1
+attrs==25.3.0
+Authlib==1.6.5
+beautifulsoup4==4.14.2
+blinker==1.9.0
+boto3==1.40.60
+botocore==1.40.60
+CacheControl==0.14.3
+cachetools==5.5.2
+certifi==2025.8.3
+cffi==2.0.0
+charset-normalizer==3.4.3
+click==8.3.0
+cloudpickle==3.1.1
+contourpy==1.3.2
+cryptography==46.0.1
+cycler==0.12.1
+entrypoints==0.4
+exceptiongroup==1.3.0
+Faker==37.12.0
+favicon==0.7.0
+filelock==3.20.0
+firebase_admin==7.1.0
+fonttools==4.60.1
+gcloud==0.18.3
+gitdb==4.0.12
+GitPython==3.1.45
+google-api-core==2.25.1
+google-auth==2.40.3
+google-cloud-core==2.4.3
+google-cloud-firestore==2.21.0
+google-cloud-storage==3.4.0
+google-crc32c==1.7.1
+google-resumable-media==2.7.2
+googleapis-common-protos==1.70.0
+grpcio==1.75.0
+grpcio-status==1.75.0
+h11==0.16.0
+h2==4.3.0
+hpack==4.1.0
+htbuilder==0.9.0
+httpcore==1.0.9
+httplib2==0.31.0
+httpx==0.28.1
+hyperframe==6.1.0
+idna==3.10
+Jinja2==3.1.6
+jmespath==1.0.1
+jsonschema==4.25.1
+jsonschema-specifications==2025.9.1
+jwcrypto==1.5.6
+kiwisolver==1.4.9
+lxml==6.0.2
+Markdown==3.9
+markdownlit==0.0.7
+MarkupSafe==3.0.2
+matplotlib==3.10.7
+msgpack==1.1.1
+narwhals==2.5.0
+numpy==2.2.6
+oauth2client==4.1.3
+ollama==0.6.0
+packaging==25.0
+pandas==2.3.2
+pillow==11.3.0
+platformdirs==4.5.0
+plotly==6.3.1
+prometheus_client==0.23.1
+proto-plus==1.26.1
+protobuf==6.31.1
+pyarrow==21.0.0
+pyasn1==0.6.1
+pyasn1_modules==0.4.2
+pycparser==2.23
+pycryptodome==3.23.0
+pydantic==2.12.3
+pydantic_core==2.41.4
+pydeck==0.9.1
+PyJWT==2.10.1
+pymdown-extensions==10.16.1
+pyOpenSSL==25.3.0
+pyparsing==3.2.5
+Pyrebase4==4.8.0
+python-dateutil==2.9.0.post0
+python-jwt==4.1.0
+pytz==2025.2
+PyYAML==6.0.3
+referencing==0.36.2
+requests==2.32.5
+requests-toolbelt==0.10.1
+rpds-py==0.27.1
+rsa==4.9.1
+s3transfer==0.14.0
+six==1.17.0
+smmap==5.0.2
+sniffio==1.3.1
+snowflake-connector-python==4.0.0
+snowflake-snowpark-python==1.42.0
+sortedcontainers==2.4.0
+soupsieve==2.8
+st-annotated-text==4.0.2
+st-theme==1.2.3
+streamlit==1.49.1
+streamlit-avatar==0.1.3
+streamlit-camera-input-live==0.2.0
+streamlit-card==1.0.2
+streamlit-embedcode==0.1.2
+streamlit-extras==0.7.8
+streamlit-float==0.3.5
+streamlit-image-coordinates==0.4.0
+streamlit-keyup==0.3.0
+streamlit-notify==0.3.1
+streamlit-toggle-switch==1.0.2
+streamlit-vertical-slider==2.5.5
+streamlit_faker==0.0.4
+tenacity==9.1.2
+toml==0.10.2
+tomlkit==0.13.3
+tornado==6.5.2
+typing-inspection==0.4.2
+typing_extensions==4.15.0
+tzdata==2025.2
+tzlocal==5.3.1
+urllib3==1.26.20
+validators==0.35.0
+setuptools
+</file>
+
+<file path="README.md">
+# streamlit-chat
+
+A simple and extensible chat interface built with **Streamlit**.
+
+## 🚀 Features
+
+* Lightweight chat UI
+* **User authorization before chatting**
+* **Save and load chat data**
+* Stores chat history in session state
+* Easy to extend with any AI or backend API
+
+## 🧰 Requirements
+
+* Python 3.x
+* Streamlit
+* Other dependencies in `requirements.txt`
+
+## ⚙️ Installation
+
+```bash
+git clone https://github.com/Khoan-IT/streamlit-chat.git
+cd streamlit-chat
+pip install -r requirements.txt
+```
+
+
+## 🛠️ Customization
+
+Edit `*.py` to:
+
+* Change UI elements (titles, avatars, layout)
+* Integrate with AI APIs (e.g., OpenAI, Hugging Face)
+* Modify authorization logic or data storage
+* Save chat logs to a file or database
+</file>
+
+</files>

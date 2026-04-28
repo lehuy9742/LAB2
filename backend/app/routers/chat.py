@@ -29,4 +29,5 @@ def chat(payload: ChatRequest, user=Depends(get_current_user)):
 
         return {"reply": reply}
     except Exception as e:
+        print(f"LỖI CHAT THẬT SỰ LÀ: {e}")
         raise HTTPException(status_code=500, detail=str(e))

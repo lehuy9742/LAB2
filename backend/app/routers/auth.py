@@ -58,12 +58,38 @@ def login(payload: LoginRequest):
 @router.post("/google")
 def google_login(payload: GoogleLoginRequest):
     try:
-        decoded = admin_auth.verify_id_token(payload.id_token)
+        # Bước 1: Mang cái Google Token gửi lên cổng Identity Toolkit của Firebase để "đổi" lấy Firebase Token
+        firebase_resp = requests.post(
+            f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key={FIREBASE_WEB_API_KEY}",
+            json={
+                "postBody": urlencode({
+                    "id_token": payload.id_token,
+                    "providerId": "google.com",
+                }),
+                "requestUri": "http://localhost:8501", # Cổng của Frontend
+                "returnIdpCredential": True,
+                "returnSecureToken": True,
+            },
+            timeout=20,
+        )
+
+        # Nếu Firebase từ chối việc đổi thẻ
+        if not firebase_resp.ok:
+            raise Exception(f"Firebase exchange failed: {firebase_resp.text}")
+
+        # Bước 2: Rút trích thông tin từ thẻ Firebase mới
+        firebase_data = firebase_resp.json()
+        firebase_id_token = firebase_data.get("idToken")
+        email = firebase_data.get("email")
+        uid = firebase_data.get("localId")
+
+        # Bước 3: Trả về cái Token CHUẨN của Firebase cho Streamlit để nó dùng cho các tính năng Chat sau này
         return {
-            "email": decoded.get("email"),
-            "uid": decoded.get("uid"),
-            "idToken": payload.id_token
+            "email": email,
+            "uid": uid,
+            "idToken": firebase_id_token
         }
+
     except Exception as e:
         raise HTTPException(status_code=401, detail=f"Google token invalid: {e}")
 

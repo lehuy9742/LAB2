@@ -2,7 +2,7 @@ import os
 from ollama import Client
 
 MODEL = os.getenv("OLLAMA_MODEL", "llama3.2:1b")
-OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://kmhvy-34-125-197-209.run.pinggy-free.link")
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 
 client = Client(host=OLLAMA_HOST)
 
