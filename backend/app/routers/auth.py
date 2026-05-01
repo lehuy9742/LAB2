@@ -44,6 +44,7 @@ def signup(payload: SignupRequest):
 @router.post("/login")
 def login(payload: LoginRequest):
     try:
+        # Dùng email và password để đăng nhập vào Firebase, nếu thành công sẽ trả về token của Firebase cho frontend để frontend lưu vào session và sử dụng cho các request sau này
         user = auth_client.sign_in_with_email_and_password(payload.email, payload.password)
         return {
             "email": payload.email,
@@ -58,44 +59,18 @@ def login(payload: LoginRequest):
 @router.post("/google")
 def google_login(payload: GoogleLoginRequest):
     try:
-        # Bước 1: Mang cái Google Token gửi lên cổng Identity Toolkit của Firebase để "đổi" lấy Firebase Token
-        firebase_resp = requests.post(
-            f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key={FIREBASE_WEB_API_KEY}",
-            json={
-                "postBody": urlencode({
-                    "id_token": payload.id_token,
-                    "providerId": "google.com",
-                }),
-                "requestUri": "http://localhost:8501", # Cổng của Frontend
-                "returnIdpCredential": True,
-                "returnSecureToken": True,
-            },
-            timeout=20,
-        )
-
-        # Nếu Firebase từ chối việc đổi thẻ
-        if not firebase_resp.ok:
-            raise Exception(f"Firebase exchange failed: {firebase_resp.text}")
-
-        # Bước 2: Rút trích thông tin từ thẻ Firebase mới
-        firebase_data = firebase_resp.json()
-        firebase_id_token = firebase_data.get("idToken")
-        email = firebase_data.get("email")
-        uid = firebase_data.get("localId")
-
-        # Bước 3: Trả về cái Token CHUẨN của Firebase cho Streamlit để nó dùng cho các tính năng Chat sau này
+        decoded = admin_auth.verify_id_token(payload.id_token)
         return {
-            "email": email,
-            "uid": uid,
-            "idToken": firebase_id_token
+            "email": decoded.get("email"),
+            "uid": decoded.get("uid"),
+            "idToken": payload.id_token
         }
-
     except Exception as e:
         raise HTTPException(status_code=401, detail=f"Google token invalid: {e}")
 
 
 @router.get("/google/start")
-def google_start():
+def google_start():    
     state = secrets.token_urlsafe(32)
 
     params = {
@@ -107,12 +82,12 @@ def google_start():
         "access_type": "offline",
         "prompt": "select_account",
     }
-
+    
     google_auth_url = (
         "https://accounts.google.com/o/oauth2/v2/auth?"
         + urlencode(params)
     )
-
+    # Trả về URL để frontend chuyển hướng người dùng đến Google để bắt đầu quá trình OAuth, đồng thời lưu state vào cookie để sau này xác thực khi Google callback về
     response = RedirectResponse(url=google_auth_url, status_code=302)
     response.set_cookie(
         key="google_oauth_state",
@@ -142,7 +117,7 @@ def google_callback(
     saved_state = request.cookies.get("google_oauth_state")
     if not saved_state or not state or saved_state != state:
         raise HTTPException(status_code=400, detail="Invalid OAuth state")
-
+    # BE lay code tu Google, doi lay token tu Google, sau do dung token do de dang nhap vao Firebase va lay token cua Firebase de tra ve cho frontend
     token_resp = requests.post(
         "https://oauth2.googleapis.com/token",
         data={
@@ -166,7 +141,7 @@ def google_callback(
 
     if not google_id_token:
         raise HTTPException(status_code=400, detail="Google did not return id_token")
-
+    # BE lay token tu Google de dang nhap vao Firebase, neu thanh cong se tra ve token cua Firebase cho frontend de frontend luu vao session va su dung cho cac request xac thuc sau nay
     firebase_resp = requests.post(
         f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key={FIREBASE_WEB_API_KEY}",
         json={
@@ -194,6 +169,7 @@ def google_callback(
         raise HTTPException(status_code=400, detail="Firebase did not return idToken")
 
     separator = "&" if "?" in FRONTEND_URL else "?"
+    # Trả kết quả firebase token về frontend để frontend có thể lưu vào session và sử dụng cho các request sau này
     redirect_to_frontend = f"{FRONTEND_URL}{separator}{urlencode({'id_token': firebase_id_token})}"
 
     response = RedirectResponse(url=redirect_to_frontend, status_code=302)

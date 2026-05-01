@@ -1,16 +1,10 @@
 import streamlit as st
 from collections import deque
 import requests
-import streamlit.components.v1 as components # Thêm dòng này
-
-
-st.set_page_config(page_title="Mika Frontend", page_icon="💬")
-st.write("Dữ liệu User hiện tại:", st.session_state.get("user"))
-
 
 from api_client import signup, login, google_login, get_messages, send_chat
 
-
+st.set_page_config(page_title="Mika Frontend", page_icon="💬")
 
 WELCOME = {"role": "assistant", "content": "Xin chào 👋! Tôi là Mika. Tôi có thể giúp gì cho bạn?"}
 
@@ -44,51 +38,32 @@ def clear_google_query_params():
         pass
 
 
-# Sửa lại hàm này trong file chatbot-page/frontend/app.py
-
 def handle_google_login_callback():
     if st.session_state.user:
         return
 
     params = st.query_params
-    # Cái id_token ở đây ĐÃ LÀ Firebase Token rồi (do cổng 8000 gửi về)
-    token_from_url = params.get("id_token")
+    raw_token = params.get("id_token")
 
-    if not token_from_url:
+    if not raw_token:
         return
 
-    # Lấy chuỗi token ra khỏi list nếu cần
-    final_token = token_from_url[0] if isinstance(token_from_url, list) else token_from_url
+    id_token = raw_token[0] if isinstance(raw_token, list) else raw_token
 
     try:
-        # --- KHÔNG gọi google_login(id_token) nữa vì sẽ bị lỗi 401 ---
-        # Thay vào đó, chúng ta dùng token này để gọi endpoint /me để lấy email và uid
-        import requests
-        from api_client import API_BASE
-        # Chỉ hiện vài ký tự đầu để kiểm tra xem nó có bị dính dấu ngoặc [ ] hay không
-        # Gọi thử lên Backend xem token này có "xịn" không
-        resp = requests.get(
-            f"{API_BASE}/auth/me", 
-            headers={"Authorization": f"Bearer {final_token}"}
-        )
-        resp.raise_for_status()
-        user_info = resp.json()
-
-        # Nếu Backend xác nhận thẻ xịn, lưu vào session_state luôn
-        st.session_state.user = {
-            "email": user_info["email"],
-            "uid": user_info["uid"],
-            "idToken": final_token
-        }
-        
+        user = google_login(id_token)
+        st.session_state.user = user
         load_history()
         clear_google_query_params()
-        st.success("Đăng nhập Google thành công!")
+        st.success("Đăng nhập Google thành công")
         st.rerun()
-        
-    except Exception as e:
-        st.error(f"Thẻ xác thực không hợp lệ: {e}")
+    except requests.HTTPError as e:
+        st.error(f"Đăng nhập Google thất bại: {e}")
         clear_google_query_params()
+    except Exception as e:
+        st.error(f"Lỗi xử lý Google login: {e}")
+        clear_google_query_params()
+
 
 def login_form():
     st.subheader("Đăng nhập")
