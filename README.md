@@ -3,10 +3,11 @@
 Dự án này là hệ thống Chatbot tóm tắt văn bản được xây dựng cho **Bài thực hành số 2** môn Tư duy tính toán. Ứng dụng tách biệt hoàn toàn giữa Frontend và Backend.
 
 ## 👤 Thông tin sinh viên
-*   **Họ và tên:** Lê Nguyễn Gia Huy
-*   **MSSV:** 24120061
-*   **Trường:** ĐH Khoa học Tự nhiên (VNU-HCMUS)
-
+* **Họ và tên:** Lê Nguyễn Gia Huy
+* **Mã số sinh viên (MSSV):** 24120061
+* **Trường:** Đại học Khoa học Tự nhiên TP.HCM (VNU-HCMUS)
+* **Khoa:** Công nghệ Thông tin
+* **Lớp:** 24CTT3
 ---
 
 ## 📂 Cấu trúc dự án
