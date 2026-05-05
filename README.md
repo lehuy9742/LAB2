@@ -1,66 +1,69 @@
-
 # 🤖 Mina Chatbot - AI Summarizer (BART Model)
 
-Dự án này là hệ thống Chatbot tóm tắt văn bản được xây dựng dựa trên kiến trúc tách biệt Frontend và Backend.
-## 👨‍🎓 Thông tin sinh viên
-* **Họ và tên:** Lê Nguyễn Gia Huy
-* **Mã số sinh viên (MSSV):** 24120061
-* **Trường:** Đại học Khoa học Tự nhiên TP.HCM (VNU-HCMUS)
-* **Khoa:** Công nghệ Thông tin
-* **Lớp:** 24CTT3
+Dự án này là hệ thống Chatbot tóm tắt văn bản được xây dựng cho **Bài thực hành số 2** môn Tư duy tính toán. Ứng dụng tách biệt hoàn toàn giữa Frontend và Backend.
+
+## 👤 Thông tin sinh viên
+*   **Họ và tên:** Lê Nguyễn Gia Huy
+*   **MSSV:** 24120061
+*   **Trường:** ĐH Khoa học Tự nhiên (VNU-HCMUS)
+
+---
 
 ## 📂 Cấu trúc dự án
-*   **backend/**: Chứa mã nguồn xử lý logic, xác thực Firebase và API tóm tắt.
-*   **frontend/**: Giao diện người dùng xây dựng bằng Streamlit.
-*   **requirements.txt**: Danh sách các thư viện cần thiết.
+*   **`backend/`**: Xử lý logic, xác thực Firebase và API.
+*   **`frontend/`**: Giao diện người dùng Streamlit.
+*   **`requirements.txt`**: Danh sách thư viện cần thiết.
 
-## 🛠️ Tính năng chính
-*   **Xác thực**: Đăng nhập bằng Google thông qua Firebase Authentication.
-*   **AI Summarization**: Sử dụng mô hình **facebook/bart-large-cnn** để tóm tắt văn bản tự động.
-*   **Database**: Lưu trữ lịch sử hội thoại vào Google Firestore.
+---
+
+## 🛠️ Công nghệ sử dụng
+*   **Framework**: FastAPI & Streamlit.
+*   **Authentication**: Firebase Authentication.
+*   **AI Model**: BART (facebook/bart-large-cnn).
+
+---
 
 ## ⚙️ Hướng dẫn cài đặt
 
-1.  **Tạo môi trường ảo:**
-    
+1. **Tạo môi trường ảo:**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # Trên Windows: venv\Scripts\activate
+   ```
+
+2. **Cài đặt thư viện:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+---
+
+## 🚀 Hướng dẫn khởi chạy
+Mở 3 Terminal riêng biệt và chạy theo thứ tự:
+
+1. **Khởi động Microservice AI (Port 8001):**
+   
 ```bash
-    python -m venv venv
-    source venv/bin/activate  # Trên Windows: venv\Scripts\activate
-    ```
+   uvicorn backend.app.sumarize_bot.main:app --port 8001
+   ```
 
-2.  **Cài đặt thư viện:**
-    
-```bash
-    pip install -r requirements.txt
-    ```
+2. **Khởi động Main Backend (Port 8000):**
+   ```bash
+   uvicorn backend.app.main:app --port 8000
+   ```
 
-## 🚀 Cách chạy ứng dụng
+3. **Khởi động Frontend (Port 8501):**
+   ```bash
+   streamlit run frontend/app.py
+   ```
 
-Ứng dụng yêu cầu khởi động 3 thành phần theo thứ tự:
+---
 
-1.  **Khởi động Microservice AI (Tóm tắt):**
-    
-```bash
-    uvicorn backend.app.sumarize_bot.main:app --port 8001
-    ```
-    *(Mô hình BART sẽ được tải tự động trong lần chạy đầu tiên)*
-
-2.  **Khởi động Main Backend:**
-    
-```bash
-    uvicorn backend.app.main:app --port 8000
-    ```
-
-3.  **Khởi động Frontend:**
-    ```bash
-    streamlit run frontend/app.py
-    ```
-
-## 🎥 Video Demo[cite: 3]
-*   **Link Video**: [Dán link Youtube/Google Drive của bạn vào đây]
-
-
+## 🎥 Video Demo
 https://github.com/user-attachments/assets/85084957-6c9c-4e38-917c-0f7e09619703
+
+
+
 
 
 ---
