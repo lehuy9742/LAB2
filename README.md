@@ -61,7 +61,9 @@ Mở 3 Terminal riêng biệt và chạy theo thứ tự:
 ---
 
 ## 🎥 Video Demo
-https://github.com/user-attachments/assets/85084957-6c9c-4e38-917c-0f7e09619703
+
+https://github.com/user-attachments/assets/f5aaee92-7ed6-46a9-b8a5-ea23d29de94e
+
 
 
 
