@@ -1,7 +1,7 @@
 
 # 🤖 Mina Chatbot - AI Summarizer (BART Model)
 
-Dự án này là hệ thống Chatbot tóm tắt văn bản được xây dựng dựa trên kiến trúc tách biệt Frontend và Backend[cite: 3].
+Dự án này là hệ thống Chatbot tóm tắt văn bản được xây dựng dựa trên kiến trúc tách biệt Frontend và Backend.
 ## 👨‍🎓 Thông tin sinh viên
 * **Họ và tên:** Lê Nguyễn Gia Huy
 * **Mã số sinh viên (MSSV):** 24120061
