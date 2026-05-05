@@ -44,12 +44,12 @@ Mở 3 Terminal riêng biệt và chạy theo thứ tự:
 1. **Khởi động Microservice AI (Port 8001):**
    
 ```bash
-   uvicorn backend.app.sumarize_bot.main:app --port 8001
+   uvicorn backend.app.sumarize_bot.main:app --reload --port 8001
    ```
 
 2. **Khởi động Main Backend (Port 8000):**
    ```bash
-   uvicorn backend.app.main:app --port 8000
+   uvicorn backend.app.main:app --reload --port 8000
    ```
 
 3. **Khởi động Frontend (Port 8501):**
